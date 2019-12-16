@@ -1,9 +1,9 @@
 #ifndef SPHEREH
 #define SPHEREH
 
-#include "hitable.h"
+#include "hittable.h"
 
-class sphere: public hitable
+class sphere: public hittable
 {
 public:
 	sphere() {}
