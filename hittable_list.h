@@ -28,6 +28,8 @@ bool hittable_list::hit(const ray& r, float t_min, float t_max, hit_record& rec)
 	for (int i = 0; i < list_size; i++)
 	{
 		// Find the closest item the ray r hit
+		// by recursively checking for closer objects
+		// than those that have been hit so far
 		if(list[i]->hit(r, t_min, closest_so_far, temp_rec))
 		{
 			hit_anything = true;

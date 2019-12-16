@@ -5,15 +5,28 @@
 #include <float.h>
 #include "random.h"
 
+// Find a random point in the unit sphere
+vec3 random_in_unit_sphere() {
+	// Generate a random point in the unit square
+	// If it's not in the unit sphere, generate another point
+	// and try again. This is known as rejection method.
+    vec3 p;
+    do {
+        p = 2.0*vec3(random_double(), random_double(), random_double()) - vec3(1,1,1);
+    } while (p.squared_length() >= 1.0);
+    return p;
+}
+
 // Determine the color of the pixel
 vec3 color(const ray& r, hittable *world)
 {
 	hit_record rec;
-	// If the ray hits the sphere, find the normal to the sphere
-	// and assign a color according to its direction
-	if (world->hit(r, 0.0, FLT_MAX, rec))
+	// If the ray hits an object, reflect the ray in a random direction
+	// and recursively determine what happens to that ray.
+	if (world->hit(r, 0.001, FLT_MAX, rec))
 	{
-		return 0.5*vec3(rec.normal.x()+1, rec.normal.y()+1, rec.normal.z()+1);
+		vec3 target = rec.p + rec.normal + random_in_unit_sphere();
+		return 0.5*color(ray(rec.p, target-rec.p), world);
 	}
 	// Calculate a blue-white linear interpolation (gradient)
 	// Color the background based on this lerp

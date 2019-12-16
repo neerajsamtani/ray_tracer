@@ -5,8 +5,11 @@
 
 struct hit_record 
 {
+	// Discriminant of intersection
 	float t;
+	// Point at parameter
 	vec3 p;
+	// Normal
 	vec3 normal;
 };
 
