@@ -3,6 +3,8 @@
 
 #include "ray.h"
 
+class material;
+
 struct hit_record 
 {
 	// Discriminant of intersection
@@ -11,6 +13,8 @@ struct hit_record
 	vec3 p;
 	// Normal
 	vec3 normal;
+	// Material
+	material *mat_ptr;
 };
 
 // Abstract class for all surfaces/volumes that can be hit
