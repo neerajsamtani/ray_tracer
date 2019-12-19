@@ -46,14 +46,15 @@ int main()
 	// Standard formatting of a .ppm file
 	std::cout << "P3\n" << nx << " " << ny << "\n255\n";
 	// Create four spheres and place them in the world
-	hittable *list[4];
+	hittable *list[5];
 	// Two lambertains (perfect mattes) which were in our initial image
-	list[0] = new sphere(vec3(0,0,-1), 0.5, new lambertian(vec3(0.8, 0.3, 0.3)));
+	list[0] = new sphere(vec3(0,0,-1), 0.5, new lambertian(vec3(0.1, 0.2, 0.5)));
 	list[1] = new sphere(vec3(0, -100.5, -1), 100, new lambertian(vec3(0.8, 0.8, 0.0)));
-	// Two fuzzy metals to reflect the world around them
-	list[2] = new sphere(vec3(1,0,-1), 0.5, new metal(vec3(0.8, 0.6, 0.2), 1.0));
-	list[3] = new sphere(vec3(-1, 0, -1), 0.5, new metal(vec3(0.8, 0.8, 0.8), 0.3));
-	hittable *world = new hittable_list(list, 4);
+	// One metal sphere and one dielectric inside another dielectric
+	list[2] = new sphere(vec3(1,0,-1), 0.5, new metal(vec3(0.8, 0.6, 0.2), 0.3));
+	list[3] = new sphere(vec3(-1,0,-1), 0.5, new dielectric(1.5));
+	list[4] = new sphere(vec3(-1,0,-1), -0.45, new dielectric(1.5));
+	hittable *world = new hittable_list(list, 5);
 	// Create a camera
 	camera cam;
 	// Color x axis from left to right using index i
@@ -68,9 +69,9 @@ int main()
 			for (int s = 0; s < ns; s++)
 			{
 				float u = float(i + random_double()) / float(nx);
-                float v = float(j + random_double()) / float(ny);
-                ray r = cam.get_ray(u, v);
-                col += color(r, world, 0);
+				float v = float(j + random_double()) / float(ny);
+				ray r = cam.get_ray(u, v);
+				col += color(r, world, 0);
 			}
 			// Average all the samples
 			col /= float(ns);
