@@ -56,7 +56,7 @@ int main()
 	list[4] = new sphere(vec3(-1,0,-1), -0.45, new dielectric(1.5));
 	hittable *world = new hittable_list(list, 5);
 	// Create a camera
-	camera cam;
+	camera cam(vec3(-2,2,1), vec3(0,0,-1), vec3(0,1,0), 90, float(nx)/float(ny));
 	// Color x axis from left to right using index i
 	// Color y axis from top to bottom using index j
 	for (int j = ny-1; j >= 0; j--)
