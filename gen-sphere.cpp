@@ -39,8 +39,8 @@ vec3 color(const ray& r, hittable *world, int depth)
 int main()
 {
 	// Image is 200x100 pixels
-	int nx = 200;
-	int ny = 100;
+	int nx = 800;
+	int ny = 400;
 	// Number of samples
 	int ns = 100;
 	// Standard formatting of a .ppm file
@@ -56,7 +56,12 @@ int main()
 	list[4] = new sphere(vec3(-1,0,-1), -0.45, new dielectric(1.5));
 	hittable *world = new hittable_list(list, 5);
 	// Create a camera
-	camera cam(vec3(-2,2,1), vec3(0,0,-1), vec3(0,1,0), 90, float(nx)/float(ny));
+	vec3 lookfrom(3,3,2);
+	vec3 lookat(0,0,-1);
+	float dist_to_focus = (lookfrom-lookat).length();
+	float aperture = 2.0;
+	camera cam(lookfrom, lookat, vec3(0,1,0), 20,
+				float(nx)/float(ny), aperture, dist_to_focus);
 	// Color x axis from left to right using index i
 	// Color y axis from top to bottom using index j
 	for (int j = ny-1; j >= 0; j--)
