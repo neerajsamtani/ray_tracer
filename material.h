@@ -5,6 +5,11 @@
 #include "random.h"
 #include "ray.h"
 
+// TODO- Motion blur for metals and glass
+// Add `scattered = ray(rec.p, target-rec.p, r_in.time());` to these materials
+// TODO - Fix bug: reflections don't show motion blur. This might be fixed by
+// adding the above statement.
+
 struct hit_record;
 
 // Calculate the vector of the reflected ray
@@ -60,7 +65,7 @@ class lambertian : public material
 			// Calculate target point
 			vec3 target = rec.p + rec.normal + random_in_unit_sphere();
 			// Calculate next ray
-			scattered = ray(rec.p, target-rec.p);
+			scattered = ray(rec.p, target-rec.p, r_in.time());
 			attenuation = albedo;
 			return true;
 		}

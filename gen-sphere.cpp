@@ -1,5 +1,6 @@
 #include <iostream>
 #include "sphere.h"
+#include "moving_sphere.h"
 #include "hittable_list.h"
 #include "camera.h"
 #include <float.h>
@@ -34,6 +35,52 @@ vec3 color(const ray& r, hittable *world, int depth)
 	}
 }
 
+// Generate lots of random spheres
+hittable *random_scene() {
+	// 40 objects in the scene, plus a ground sphere and 3 large spheres
+	// Start n at 50000 to ensure we get 40 randomly generated spheres at
+	// a distance of atleast 0.9 away from vec3(4,0.2,0)
+	int n = 50000;
+	hittable **list = new hittable*[n+1];
+	// Create ground sphere
+	list[0] =  new sphere(vec3(0,-1000,0), 1000, new lambertian(vec3(0.5, 0.5, 0.5)));
+	int i = 1;
+	for (int a = -10; a < 10; a++) {
+		for (int b = -10; b < 10; b++) {
+			float choose_mat = random_double();
+			vec3 center(a+0.9*random_double(),0.2,b+0.9*random_double());
+			if ((center-vec3(4,0.2,0)).length() > 0.9) {
+				if (choose_mat < 0.8) {  // diffuse
+					list[i++] = new moving_sphere(center,
+						center+vec3(0, 0.5*random_double(), 0),
+						0.0, 1.0, 0.2,
+						new lambertian(vec3(random_double()*random_double(),
+											random_double()*random_double(),
+											random_double()*random_double())
+						)
+					);
+				}
+				else if (choose_mat < 0.95) { // metal
+					list[i++] = new sphere(center, 0.2,
+							new metal(vec3(0.5*(1 + random_double()),
+										   0.5*(1 + random_double()),
+										   0.5*(1 + random_double())),
+									  0.5*random_double()));
+				}
+				else {  // glass
+					list[i++] = new sphere(center, 0.2, new dielectric(1.5));
+				}
+			}
+		}
+	}
+
+	list[i++] = new sphere(vec3(0, 1, 0), 1.0, new dielectric(1.5));
+	list[i++] = new sphere(vec3(-4, 1, 0), 1.0, new lambertian(vec3(0.4, 0.2, 0.1)));
+	list[i++] = new sphere(vec3(4, 1, 0), 1.0, new metal(vec3(0.7, 0.6, 0.5), 0.0));
+
+	return new hittable_list(list,i);
+}
+
 // Print PPM to stdout
 // Pipe to a .ppm file in the terminal to save and view the output
 int main()
@@ -45,23 +92,15 @@ int main()
 	int ns = 100;
 	// Standard formatting of a .ppm file
 	std::cout << "P3\n" << nx << " " << ny << "\n255\n";
-	// Create four spheres and place them in the world
-	hittable *list[5];
-	// Two lambertains (perfect mattes) which were in our initial image
-	list[0] = new sphere(vec3(0,0,-1), 0.5, new lambertian(vec3(0.1, 0.2, 0.5)));
-	list[1] = new sphere(vec3(0, -100.5, -1), 100, new lambertian(vec3(0.8, 0.8, 0.0)));
-	// One metal sphere and one dielectric inside another dielectric
-	list[2] = new sphere(vec3(1,0,-1), 0.5, new metal(vec3(0.8, 0.6, 0.2), 0.3));
-	list[3] = new sphere(vec3(-1,0,-1), 0.5, new dielectric(1.5));
-	list[4] = new sphere(vec3(-1,0,-1), -0.45, new dielectric(1.5));
-	hittable *world = new hittable_list(list, 5);
+	// Generate a random scene
+	hittable *world = random_scene();
 	// Create a camera
-	vec3 lookfrom(3,3,2);
-	vec3 lookat(0,0,-1);
+	vec3 lookfrom(13,2,3);
+	vec3 lookat(0,0,0);
 	float dist_to_focus = (lookfrom-lookat).length();
-	float aperture = 2.0;
+	float aperture = 0.0;
 	camera cam(lookfrom, lookat, vec3(0,1,0), 20,
-				float(nx)/float(ny), aperture, dist_to_focus);
+				float(nx)/float(ny), aperture, dist_to_focus, 0.0, 1.0);
 	// Color x axis from left to right using index i
 	// Color y axis from top to bottom using index j
 	for (int j = ny-1; j >= 0; j--)
