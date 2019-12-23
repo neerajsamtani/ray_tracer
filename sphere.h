@@ -2,6 +2,7 @@
 #define SPHEREH
 
 #include "hittable.h"
+#include "aabb.h"
 
 class sphere: public hittable
 {
@@ -14,6 +15,7 @@ public:
 		mat_ptr = m;
 	}
 	virtual bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const;
+	virtual bool bounding_box(float t0, float t1, aabb& box) const;
 	vec3 center;
 	float radius;
 	material *mat_ptr;
@@ -50,6 +52,15 @@ bool sphere::hit(const ray& r, float t_min, float t_max, hit_record& rec) const
 		}
 	}
 	return false;
+}
+
+// Create an AABB for the sphere
+// Since this sphere doesn't move, t0 and t1 aren't required
+// They are just part of the function definition
+bool sphere::bounding_box(float t0, float t1, aabb& box) const {
+	box = aabb(center - vec3(radius, radius, radius),
+			   center + vec3(radius, radius, radius));
+	return true;
 }
 
 #endif

@@ -86,8 +86,8 @@ hittable *random_scene() {
 int main()
 {
 	// Image is 200x100 pixels
-	int nx = 800;
-	int ny = 400;
+	int nx = 200;
+	int ny = 100;
 	// Number of samples
 	int ns = 100;
 	// Standard formatting of a .ppm file
