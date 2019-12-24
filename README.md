@@ -2,15 +2,21 @@
 
 Building a fully functional ray tracer from scratch based on the "Ray Tracing" series by Peter Shirley.
 
-### In Progress
+### Completed Features
 
-- Simple brute-force path tracer. 
+- Spheres and Light Rays
+- Antialiasing
+- Lambertian, Metal, and Dielectric Materials
+- Positionable Camera
+- Defocus Blur
+- Motion Blur
+- Bounding Volume Hierarchy (BVH)
 
 ### TODO
 
-- Textures
-- Volumes (like fog)
+- Solid Textures and Texture Mapping
+- Perlin Noise
 - Rectangles
-- Instances
 - Lights
-- Bounding Volume Hierarchy (BVH).
+- Instances
+- Volumes
