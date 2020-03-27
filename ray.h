@@ -1,22 +1,33 @@
-#ifndef RAYH
-#define RAYH
+#ifndef RAY_H
+#define RAY_H
+
 #include "vec3.h"
+
 
 class ray
 {
-public:
-	ray() {}
-	ray(const vec3& a, const vec3& b, float ti = 0.0) { A = a; B = b; _time = ti;}
-	vec3 origin() const    { return A; }
-	vec3 direction() const { return B; }
-	// Time at which the ray exists
-	// Used to determine motion blur
-	float time() const { return _time; }
-	vec3 point_at_parameter(float t) const { return A + t*B; }
+    public:
+        ray() {}
+        ray(const vec3& origin, const vec3& direction)
+            : orig(origin), dir(direction), tm(0)
+        {}
 
-	vec3 A;
-	vec3 B;
-	float _time;
+        ray(const vec3& origin, const vec3& direction, double time)
+            : orig(origin), dir(direction), tm(time)
+        {}
+
+        vec3 origin() const    { return orig; }
+        vec3 direction() const { return dir; }
+        double time() const    { return tm; }
+
+        vec3 at(double t) const {
+            return orig + t*dir;
+        }
+
+    public:
+        vec3 orig;
+        vec3 dir;
+        double tm;
 };
 
 #endif

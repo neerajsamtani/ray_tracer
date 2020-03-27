@@ -1,29 +1,27 @@
-#ifndef HITTABLEH
-#define HITTABLEH
+#ifndef HITTABLE_H
+#define HITTABLE_H
 
-#include "ray.h"
-#include "aabb.h"
+#include "rtweekend.h"
+
 
 class material;
 
-struct hit_record 
-{
-	// Discriminant of intersection
-	float t;
-	// Point at parameter
-	vec3 p;
-	// Normal
-	vec3 normal;
-	// Material
-	material *mat_ptr;
+struct hit_record {
+    vec3 p;
+    vec3 normal;
+    shared_ptr<material> mat_ptr;
+    double t;
+    bool front_face;
+
+    inline void set_face_normal(const ray& r, const vec3& outward_normal) {
+        front_face = dot(r.direction(), outward_normal) < 0;
+        normal = front_face ? outward_normal :-outward_normal;
+    }
 };
 
-// Abstract class for all surfaces/volumes that can be hit
-class hittable
-{
-public:
-	virtual bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const = 0;
-	virtual bool bounding_box(float t0, float t1, aabb& box) const = 0;
+class hittable {
+    public:
+        virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const = 0;
 };
 
 #endif

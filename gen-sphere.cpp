@@ -89,7 +89,7 @@ int main()
 	int nx = 200;
 	int ny = 100;
 	// Number of samples
-	int ns = 100;
+	int ns = 10;
 	// Standard formatting of a .ppm file
 	std::cout << "P3\n" << nx << " " << ny << "\n255\n";
 	// Generate a random scene
