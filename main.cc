@@ -4,6 +4,7 @@
 #include "hittable_list.h"
 #include "material.h"
 #include "sphere.h"
+#include "moving_sphere.h"
 
 #include <iostream>
 
@@ -32,21 +33,21 @@ vec3 ray_color(const ray& r, const hittable& world, int depth) {
 hittable_list random_scene() {
     hittable_list world;
 
-    world.add(
-        make_shared<sphere>(vec3(0,-1000,0), 1000, make_shared<lambertian>(vec3(0.5, 0.5, 0.5)))
-    );
+    world.add(make_shared<sphere>(
+        vec3(0,-1000,0), 1000, make_shared<lambertian>(vec3(0.5, 0.5, 0.5))));
 
     int i = 1;
-    for (int a = -11; a < 11; a++) {
-        for (int b = -11; b < 11; b++) {
+    for (int a = -10; a < 10; a++) {
+        for (int b = -10; b < 10; b++) {
             auto choose_mat = random_double();
             vec3 center(a + 0.9*random_double(), 0.2, b + 0.9*random_double());
-            if ((center - vec3(4, 0.2, 0)).length() > 0.9) {
+            if ((center - vec3(4, .2, 0)).length() > 0.9) {
                 if (choose_mat < 0.8) {
                     // diffuse
                     auto albedo = vec3::random() * vec3::random();
-                    world.add(
-                        make_shared<sphere>(center, 0.2, make_shared<lambertian>(albedo)));
+                    world.add(make_shared<moving_sphere>(
+                        center, center + vec3(0, random_double(0,.5), 0), 0.0, 1.0, 0.2,
+                        make_shared<lambertian>(albedo)));
                 } else if (choose_mat < 0.95) {
                     // metal
                     auto albedo = vec3::random(.5, 1);
@@ -61,12 +62,11 @@ hittable_list random_scene() {
         }
     }
 
-    world.add(
-        make_shared<sphere>(vec3(0, 1, 0), 1.0, make_shared<dielectric>(1.5)));
-    world.add(
-        make_shared<sphere>(vec3(-4, 1, 0), 1.0, make_shared<lambertian>(vec3(0.4, 0.2, 0.1))));
-    world.add(
-        make_shared<sphere>(vec3(4, 1, 0), 1.0, make_shared<metal>(vec3(0.7, 0.6, 0.5), 0.0)));
+    world.add(make_shared<sphere>(vec3(0, 1, 0), 1.0, make_shared<dielectric>(1.5)));
+    world.add(make_shared<sphere>(
+        vec3(-4, 1, 0), 1.0, make_shared<lambertian>(vec3(0.4, 0.2, 0.1))));
+    world.add(make_shared<sphere>(
+        vec3(4, 1, 0), 1.0, make_shared<metal>(vec3(0.7, 0.6, 0.5), 0.0)));
 
     return world;
 }
@@ -87,9 +87,9 @@ int main() {
     vec3 lookat(0,0,0);
     vec3 vup(0,1,0);
     auto dist_to_focus = 10.0;
-    auto aperture = 0.1;
+    auto aperture = 0.0;
 
-    camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
+    camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
 
     for (int j = image_height-1; j >= 0; --j) {
         std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
